@@ -1,0 +1,34 @@
+---
+# Overview: Playbook to bootstrap a new workstation.
+# Applies to: developement
+# Description: 
+#   Ensures that all developement tools are installed and configurated
+# 
+###########
+
+
+### 
+# Notice the minus on the line below -- this starts the playbook's record
+# in the YAML document. Only one playbook is allowed per YAML file.  Indent
+# the body of the playbook.
+-
+
+  hosts: all
+
+  user: yavor
+
+  vars:
+     local_home: "{{ lookup('env','HOME') }}"
+
+  tasks:
+    - name: update package sources
+      sudo: yes
+      apt: update_cache=yes
+
+    - name: install oracle java
+      script: files/install-oracle-java.sh
+      sudo: yes
+
+    - name: install haskell
+      apt: name="haskell-platform" state=latest
+      sudo: yes

@@ -1,0 +1,141 @@
+---
+# Overview: Playbook to bootstrap a new workstation.
+# Applies to: developement
+# Description: 
+#   Ensures that all developement tools are installed and configurated
+# 
+###########
+
+
+### 
+# Notice the minus on the line below -- this starts the playbook's record
+# in the YAML document. Only one playbook is allowed per YAML file.  Indent
+# the body of the playbook.
+-
+
+  hosts: all
+
+  user: yavor
+
+  vars:
+     local_home: "{{ lookup('env','HOME') }}"
+
+  tasks:
+    - name: update package sources
+      sudo: yes
+      apt: update_cache=yes
+
+    - name: install common packages
+      sudo: yes
+      apt: name={{item}} state=latest
+      with_items:
+        - wget
+        - curl
+        - git
+        - build-essential
+        - checkinstall
+
+    - name: check if vim is installed
+      stat: path=/usr/bin/vim
+      register: vim_executable
+
+    - name: install vim required packeages
+      sudo: yes
+      apt: name={{item}} state=latest
+      with_items:
+        - libncurses5-dev
+        - libgnome2-dev
+        - libgnomeui-dev
+        - libgtk2.0-dev
+        - libatk1.0-dev
+        - libbonoboui2-dev
+        - libcairo2-dev
+        - libx11-dev
+        - libxpm-dev
+        - libxt-dev
+        - python-dev
+        - ruby-dev
+        - mercurial
+        - exuberant-ctags
+      when: not vim_executable.stat.exists
+
+    - name: install vim
+      sudo: yes
+      script: files/install-vim.sh
+      when: not vim_executable.stat.exists
+
+    - name: config vim
+      sudo: yes
+      script: files/config-vim.sh
+      when: not vim_executable.stat.exists
+
+    - name: check if zsh is installed
+      stat: path=/bin/zsh
+      register: zsh_executable
+
+    - name: install zsh required packeages
+      sudo: yes
+      apt: name={{item}} state=latest
+      with_items:
+        - autoconf
+        - yodl
+        - libncursesw5-dev
+        - texinfo
+      when: not zsh_executable.stat.exists
+
+    - name: install zsh
+      sudo: yes
+      script: files/install-zsh.sh
+      when: not zsh_executable.stat.exists
+
+    - name: check if tmux is installed
+      stat: path=/usr/bin/tmux
+      register: tmux_executable
+
+    - name: install tmux required packeages
+      sudo: yes
+      apt: name={{item}} state=latest
+      with_items:
+        - libevent-dev
+        - libncurses-dev
+        - pkg-config
+      when: not tmux_executable.stat.exists
+
+    - name: install tmux
+      sudo: yes
+      script: files/install-tmux.sh
+      when: not tmux_executable.stat.exists
+
+    - name: check if prezto is installed
+      stat: path="{{local_home}}/.zprezto"
+      register: prezto_dir
+
+    - name: install prezto
+      script: files/install-prezto.sh
+      when: not prezto_dir.stat.exists
+
+    - name: copy prezto patch
+      copy: src=files/zprezto.patch dest=/tmp
+      when: not prezto_dir.stat.exists
+
+    - name: config prezto
+      script: files/config-prezto.sh
+      when: not prezto_dir.stat.exists
+
+    - name: create projects dir
+      file: path="{{local_home}}/projects" state=directory owner={{ansible_ssh_user}} group={{ansible_ssh_user}} mode=0755
+
+    - name: clone dotfiles
+      git: repo=https://github.com/YAtOff/dotfiles.git dest="{{local_home}}/projects/dotfiles" recursive=yes
+
+    - name: install dotfiles
+      command: ./install.sh chdir="{{local_home}}/projects/dotfiles"
+
+    - name: create packages dir
+      file: path="{{local_home}}/packages" state=directory owner={{ansible_ssh_user}} group={{ansible_ssh_user}} mode=0755
+
+    - name: clone dircolors repo
+      git: repo=https://github.com/huyz/dircolors-solarized.git dest="{{local_home}}/packages/dircolors-solarized"
+
+    - name: config dircolors
+      script: files/config-dircolors.sh

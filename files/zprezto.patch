@@ -1,0 +1,164 @@
+From 3159535fd70e87a6d525d357631df706d962887c Mon Sep 17 00:00:00 2001
+From: Yavor Atov <yavor.atov@gmail.com>
+Date: Tue, 13 May 2014 16:43:17 +0300
+Subject: [PATCH 2/6] Added some plugins and use vi key-bindings
+
+---
+ runcoms/zpreztorc |   21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/runcoms/zpreztorc b/runcoms/zpreztorc
+index a54fdb0..2df4476 100644
+--- a/runcoms/zpreztorc
++++ b/runcoms/zpreztorc
+@@ -10,7 +10,7 @@
+ #
+ 
+ # Set case-sensitivity for completion, history lookup, etc.
+-# zstyle ':prezto:*:*' case-sensitive 'yes'
++zstyle ':prezto:*:*' case-sensitive 'yes'
+ 
+ # Color output (auto set to 'no' on dumb terminals).
+ zstyle ':prezto:*:*' color 'yes'
+@@ -32,17 +32,24 @@ zstyle ':prezto:load' pmodule \
+   'spectrum' \
+   'utility' \
+   'completion' \
+-  'prompt'
++  'prompt' \
++  'archive' \
++  'fasd' \
++  'python' \
++  'tmux' \
++  'command-not-found' \
++  'git' \
++  'ruby'
+ 
+ #
+ # Editor
+ #
+ 
+ # Set the key mapping style to 'emacs' or 'vi'.
+-zstyle ':prezto:module:editor' key-bindings 'emacs'
++zstyle ':prezto:module:editor' key-bindings 'vi'
+ 
+ # Auto convert .... to ../..
+-# zstyle ':prezto:module:editor' dot-expansion 'yes'
++zstyle ':prezto:module:editor' dot-expansion 'yes'
+ 
+ #
+ # Git
+@@ -99,10 +106,10 @@ zstyle ':prezto:module:prompt' theme 'sorin'
+ #
+ 
+ # Auto start a session when Zsh is launched in a local terminal.
+-# zstyle ':prezto:module:screen:auto-start' local 'yes'
++zstyle ':prezto:module:screen:auto-start' local 'yes'
+ 
+ # Auto start a session when Zsh is launched in a SSH connection.
+-# zstyle ':prezto:module:screen:auto-start' remote 'yes'
++zstyle ':prezto:module:screen:auto-start' remote 'yes'
+ 
+ #
+ # SSH
+@@ -148,7 +155,7 @@ zstyle ':prezto:module:prompt' theme 'sorin'
+ #
+ 
+ # Auto start a session when Zsh is launched in a local terminal.
+-# zstyle ':prezto:module:tmux:auto-start' local 'yes'
++zstyle ':prezto:module:tmux:auto-start' local 'yes'
+ 
+ # Auto start a session when Zsh is launched in a SSH connection.
+ # zstyle ':prezto:module:tmux:auto-start' remote 'yes'
+-- 
+1.7.10.4
+
+
+From 341962904aaac8d4915309d1020feae47d222311 Mon Sep 17 00:00:00 2001
+From: Yavor Atov <yavor.atov@gmail.com>
+Date: Tue, 13 May 2014 16:43:58 +0300
+Subject: [PATCH 3/6] Added Django shortcuts
+
+---
+ runcoms/zshrc |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/runcoms/zshrc b/runcoms/zshrc
+index e87283f..a98b3d6 100644
+--- a/runcoms/zshrc
++++ b/runcoms/zshrc
+@@ -11,4 +11,6 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+ fi
+ 
+ # Customize to your needs...
+-
++alias djsh="python manage.py shell_plus"
++alias djt="python manage.py test"
++alias djrs="python manage.py runserver_plus"
+-- 
+1.7.10.4
+
+
+From a463a91ec05accea01afbd198c0a69a427b8e774 Mon Sep 17 00:00:00 2001
+From: Yavor Atov <yavor.atov@gmail.com>
+Date: Tue, 13 May 2014 17:13:17 +0300
+Subject: [PATCH 4/6] Added node module
+
+---
+ runcoms/zpreztorc |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/runcoms/zpreztorc b/runcoms/zpreztorc
+index 2df4476..58e4036 100644
+--- a/runcoms/zpreztorc
++++ b/runcoms/zpreztorc
+@@ -39,7 +39,8 @@ zstyle ':prezto:load' pmodule \
+   'tmux' \
+   'command-not-found' \
+   'git' \
+-  'ruby'
++  'ruby' \
++  'node'
+ 
+ #
+ # Editor
+-- 
+1.7.10.4
+
+
+From f5630262be3db1ca29a0cf45e4ae3cf87c8ff988 Mon Sep 17 00:00:00 2001
+From: Yavor Atov <yavor.atov@gmail.com>
+Date: Tue, 13 May 2014 17:13:34 +0300
+Subject: [PATCH 5/6] Confugurated syntax highlighting
+
+---
+ runcoms/zpreztorc |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/runcoms/zpreztorc b/runcoms/zpreztorc
+index 58e4036..2339eaf 100644
+--- a/runcoms/zpreztorc
++++ b/runcoms/zpreztorc
+@@ -125,12 +125,12 @@ zstyle ':prezto:module:screen:auto-start' remote 'yes'
+ 
+ # Set syntax highlighters.
+ # By default, only the main highlighter is enabled.
+-# zstyle ':prezto:module:syntax-highlighting' highlighters \
+-#   'main' \
+-#   'brackets' \
+-#   'pattern' \
+-#   'cursor' \
+-#   'root'
++zstyle ':prezto:module:syntax-highlighting' highlighters \
++  'main' \
++  'brackets' \
++  'pattern' \
++  'cursor' \
++  'root'
+ #
+ # Set syntax highlighting styles.
+ # zstyle ':prezto:module:syntax-highlighting' styles \
+-- 
+1.7.10.4
+
+
