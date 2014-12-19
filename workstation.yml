@@ -24,6 +24,7 @@
     - name: update package sources
       sudo: yes
       apt: update_cache=yes
+      ignore_errors: yes
 
     - name: install common packages
       sudo: yes
@@ -57,6 +58,7 @@
         - ruby-dev
         - mercurial
         - exuberant-ctags
+        - silversearcher-ag
       when: not vim_executable.stat.exists
 
     - name: install vim
@@ -122,6 +124,15 @@
       script: files/config-prezto.sh
       when: not prezto_dir.stat.exists
 
+    - name: check if fasd is installed
+      stat: path=/usr/local/bin/fasd
+      register: fasd_executable
+
+    - name: install fasd
+      sudo: yes
+      script: files/install-fasd.sh
+      when: not fasd_executable.stat.exists
+
     - name: create projects dir
       file: path="{{local_home}}/projects" state=directory owner={{ansible_ssh_user}} group={{ansible_ssh_user}} mode=0755
 
@@ -139,3 +150,58 @@
 
     - name: config dircolors
       script: files/config-dircolors.sh
+
+    - name: install gnome colors solarized required packages
+      apt: name=dconf-cli
+      sudo: yes
+
+    - name: clone gnome colors solarized required packages
+      git: repo=https://github.com/Anthony25/gnome-terminal-colors-solarized.git dest="{{local_home}}/packages/gnome-terminal-colors-solarized"
+
+    - name: install gnome colors solarized required packages
+      command: ./install.sh chdir={{local_home}}/packages/gnome-terminal-colors-solarized
+
+    - name: install pyenv
+      git: repo=https://github.com/yyuu/pyenv.git dest="{{local_home}}/.pyenv"
+
+    - name: install pyenv virtualenv
+      git: repo=https://github.com/yyuu/pyenv-virtualenv.git dest="{{local_home}}/.pyenv/plugins/pyenv-virtualenv"
+
+    - name: make pyenv virtualenv auto init
+      shell: echo 'eval "$({{local_home}}/.pyenv/bin/pyenv virtualenv-init -)"' >> "{{local_home}}/.zshenv"
+
+    - name: install nvm
+      shell: curl https://raw.githubusercontent.com/creationix/nvm/v0.18.0/install.sh | bash
+      args:
+        chdir: "{{local_home}}"
+
+    - name: install redis
+      apt: name=redis-server
+
+    - name: install python 2.7.8
+      command: {{item}}
+      with_items:
+        - "sudo apt-get build-dep python2.7"
+        - "pyenv install 2.7.8"
+
+    - name: check if java is installed
+      stat: path=/usr/bin/java
+      register: java_executable
+
+    - name: install oracle java
+      sudo: yes
+      script: files/install-oracle-java.sh
+      when: not java_executable.stat.exists
+
+    - name: check if scala is installed
+      stat: path=/usr/bin/scala
+      register: scala_executable
+
+    - name: install scala
+      sudo: yes
+      script: files/install-scala.sh
+      when: not scala_executable.stat.exists
+
+    - name: install docker
+      apt: name=docker.io
+

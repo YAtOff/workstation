@@ -1,4 +1,4 @@
-#!/bin/bahs
+#!/bin/bash
 
 cd ~/.zprezto
 
